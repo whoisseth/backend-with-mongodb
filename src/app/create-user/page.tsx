@@ -48,10 +48,7 @@ const defaultValues: Partial<UserFormValues> = {
 };
 
 async function createUser(data: UserFormValues) {
-  const { data: response } = await axios.post(
-    `${process.env.NEXT_PUBLIC_HOST_URL}/api/user/create`,
-    data
-  );
+  const { data: response } = await axios.post(`/api/user/create`, data);
   return response.data;
 }
 
