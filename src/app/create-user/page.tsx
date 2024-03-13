@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 // import { useMutation } from "react-query";
 
 export const todoFormSchema = z.object({
@@ -57,7 +58,6 @@ export default function ProfileForm() {
 
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
-    defaultValues,
     mode: "onChange"
   });
 
@@ -72,6 +72,7 @@ export default function ProfileForm() {
           </pre>
         )
       });
+
       form.reset();
     } catch (error) {
       console.log("submit-error ", error);
