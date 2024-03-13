@@ -1,4 +1,5 @@
 /** @format */
+export const dynamic = "force-dynamic";
 
 import { connectToDb } from "@/lib/db";
 import { User } from "@/models/User";

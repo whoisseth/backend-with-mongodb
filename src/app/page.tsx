@@ -13,7 +13,7 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { User } from "@/models/User";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Delete, Edit, Trash } from "lucide-react";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
@@ -24,7 +24,14 @@ async function deleteUser(id: string) {
 }
 
 export default function HomePage() {
-  const { mutateAsync } = useMutation(deleteUser);
+  const queryClient = useQueryClient();
+
+  const { mutateAsync } = useMutation({
+    mutationFn: (id: string) => deleteUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    }
+  });
 
   const { isLoading, error, data, refetch } = useQuery<User[]>({
     queryKey: ["users"],
@@ -58,7 +65,7 @@ export default function HomePage() {
                 <TableCell className="font-medium"> {d.name}</TableCell>
                 <TableCell>{d.bio}</TableCell>
                 <TableCell className="flex items-center gap-4">
-                  <EditUser data={d} refetch={refetch} />
+                  <EditUser data={d} />
 
                   <Trash
                     onClick={() => handelDelete(d._id)}

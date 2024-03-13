@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 // import { useMutation } from "react-query";
 
 const userFormSchema = z.object({
@@ -53,7 +53,7 @@ async function createUser(data: UserFormValues) {
 }
 
 export default function ProfileForm() {
-  const { mutate } = useMutation(createUser);
+  const { mutate } = useMutation({ mutationFn: createUser });
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),

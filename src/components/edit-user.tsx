@@ -30,15 +30,13 @@ import {
   RefetchOptions,
   RefetchQueryFilters,
   useMutation
-} from "react-query";
+} from "@tanstack/react-query";
 import axios from "axios";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   data: User;
-  refetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<User[], unknown>>;
 };
 
 const userFormSchema = z.object({
@@ -64,12 +62,19 @@ async function updateData(newData: User) {
 }
 
 export default function EditUser(props: Props) {
+  const queryClient = useQueryClient();
+
   const defaultValues: Partial<UserFormValues> = {
     name: props.data.name,
     bio: props.data.bio
   };
 
-  const { mutateAsync } = useMutation(updateData);
+  const { mutateAsync } = useMutation({
+    mutationFn: updateData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    }
+  });
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
@@ -82,7 +87,6 @@ export default function EditUser(props: Props) {
     toast({
       description: "User is Updated"
     });
-    props.refetch();
   }
 
   return (
