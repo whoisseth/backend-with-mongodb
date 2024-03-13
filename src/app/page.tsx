@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { User } from "@/models/User";
+import { Todo } from "@/models/Todo";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Delete, Edit, Trash } from "lucide-react";
 import axios from "axios";
@@ -29,12 +29,12 @@ export default function HomePage() {
   const { mutateAsync } = useMutation({
     mutationFn: (id: string) => deleteUser(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     }
   });
 
-  const { isLoading, error, data, refetch } = useQuery<User[]>({
-    queryKey: ["users"],
+  const { isLoading, error, data, refetch } = useQuery<Todo[]>({
+    queryKey: ["todos"],
     queryFn: () => fetch("/api/user").then((res) => res.json())
   });
 
@@ -54,16 +54,16 @@ export default function HomePage() {
           <TableCaption>A list of your recent Users.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Bio</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Description</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((d) => (
               <TableRow key={d._id}>
-                <TableCell className="font-medium"> {d.name}</TableCell>
-                <TableCell>{d.bio}</TableCell>
+                <TableCell className="font-medium"> {d.title}</TableCell>
+                <TableCell>{d.description}</TableCell>
                 <TableCell className="flex items-center gap-4">
                   <EditUser data={d} />
 

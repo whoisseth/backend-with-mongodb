@@ -26,8 +26,8 @@ import { toast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 // import { useMutation } from "react-query";
 
-const userFormSchema = z.object({
-  name: z
+export const todoFormSchema = z.object({
+  title: z
     .string()
     .min(2, {
       message: "Username must be at least 2 characters."
@@ -36,18 +36,18 @@ const userFormSchema = z.object({
       message: "Username must not be longer than 30 characters."
     }),
 
-  bio: z.string().max(160).min(4)
+  description: z.string().max(160).min(4)
 });
 
-type UserFormValues = z.infer<typeof userFormSchema>;
+export type TodoFormValues = z.infer<typeof todoFormSchema>;
 
 // This can come from your database or API.
-const defaultValues: Partial<UserFormValues> = {
-  name: "test user name",
-  bio: "I own a computer."
+const defaultValues: Partial<TodoFormValues> = {
+  title: "test user name",
+  description: "I own a computer."
 };
 
-async function createUser(data: UserFormValues) {
+async function createUser(data: TodoFormValues) {
   const { data: response } = await axios.post(`/api/user/create`, data);
   return response.data;
 }
@@ -55,22 +55,27 @@ async function createUser(data: UserFormValues) {
 export default function ProfileForm() {
   const { mutate } = useMutation({ mutationFn: createUser });
 
-  const form = useForm<UserFormValues>({
-    resolver: zodResolver(userFormSchema),
+  const form = useForm<TodoFormValues>({
+    resolver: zodResolver(todoFormSchema),
     defaultValues,
     mode: "onChange"
   });
 
-  function onSubmit(data: UserFormValues) {
-    mutate(data);
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      )
-    });
+  function onSubmit(data: TodoFormValues) {
+    try {
+      mutate(data);
+      toast({
+        title: "You submitted the following values:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        )
+      });
+      form.reset();
+    } catch (error) {
+      console.log("submit-error ", error);
+    }
   }
 
   return (
@@ -79,12 +84,12 @@ export default function ProfileForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="name"
+            name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} />
+                  <Input placeholder="Title.." {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -94,10 +99,10 @@ export default function ProfileForm() {
 
           <FormField
             control={form.control}
-            name="bio"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Bio</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Tell us a little bit about yourself"
@@ -111,7 +116,7 @@ export default function ProfileForm() {
             )}
           />
 
-          <Button type="submit">Add User</Button>
+          <Button type="submit">Add Todo</Button>
         </form>
       </Form>
     </div>

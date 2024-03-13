@@ -1,18 +1,20 @@
-import { User } from "@/models/User";
+// import { User } from "@/models/Todo";
+import { Todo } from "@/models/Todo";
+
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
 
-    const { name, bio } = reqBody;
+    const { title, description } = reqBody;
 
-    const newUser = new User({
-      name,
-      bio
+    const newTodo = new Todo({
+      title,
+      description
     });
 
-    const savedUser = await newUser.save();
+    const savedUser = await newTodo.save();
     console.log("data added", savedUser);
     return NextResponse.json({
       message: " User created successfully",

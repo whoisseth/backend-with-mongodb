@@ -24,7 +24,7 @@ import { toast } from "./ui/use-toast";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@/models/User";
+import { Todo } from "@/models/Todo";
 import {
   QueryObserverResult,
   RefetchOptions,
@@ -34,29 +34,17 @@ import {
 import axios from "axios";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useQueryClient } from "@tanstack/react-query";
+import { TodoFormValues, todoFormSchema } from "@/app/create-user/page";
 
 type Props = {
-  data: User;
+  data: Todo;
 };
 
-const userFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Username must be at least 2 characters."
-    })
-    .max(30, {
-      message: "Username must not be longer than 30 characters."
-    }),
-
-  bio: z.string().max(160).min(4)
-});
-
-type UserFormValues = z.infer<typeof userFormSchema>;
+// type UserFormValues = z.infer<typeof todoFormSchema>;
 
 // This can come from your database or API.
 
-async function updateData(newData: User) {
+async function updateData(newData: Todo) {
   const { data } = await axios.put(`/api/user/${newData._id}`, newData);
   return data;
 }
@@ -64,25 +52,25 @@ async function updateData(newData: User) {
 export default function EditUser(props: Props) {
   const queryClient = useQueryClient();
 
-  const defaultValues: Partial<UserFormValues> = {
-    name: props.data.name,
-    bio: props.data.bio
+  const defaultValues: Partial<TodoFormValues> = {
+    title: props.data.title,
+    description: props.data.description
   };
 
   const { mutateAsync } = useMutation({
     mutationFn: updateData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     }
   });
 
-  const form = useForm<UserFormValues>({
-    resolver: zodResolver(userFormSchema),
+  const form = useForm<TodoFormValues>({
+    resolver: zodResolver(todoFormSchema),
     defaultValues,
     mode: "onChange"
   });
 
-  async function onSubmit(data: UserFormValues) {
+  async function onSubmit(data: TodoFormValues) {
     await mutateAsync({ _id: props.data._id, ...data });
     toast({
       description: "User is Updated"
@@ -99,7 +87,7 @@ export default function EditUser(props: Props) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="name"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
@@ -114,7 +102,7 @@ export default function EditUser(props: Props) {
 
             <FormField
               control={form.control}
-              name="bio"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
