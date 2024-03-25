@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
@@ -29,17 +29,23 @@ export default function RootLayout({
         disableTransitionOnChange
       >
         <body className={cn(inter.className, " min-h-screen w-full")}>
-          <nav className="flex gap-2 pb-10 relative p-8 ">
-            <Link className={buttonVariants({ variant: "link" })} href={"/"}>
-              Home page
-            </Link>
-            <Link
-              className={buttonVariants({ variant: "link" })}
-              href={"/create-user"}
-            >
-              Create User{" "}
-            </Link>
-            <ModeToggle />
+          <nav className="flex gap-2 pb-10 relative p-8 justify-between items-center  ">
+            <div className="flex items-center gap-2">
+              <Link className={buttonVariants({ variant: "link" })} href={"/"}>
+                Home page
+              </Link>
+              <Link
+                className={buttonVariants({ variant: "link" })}
+                href={"/create-user"}
+              >
+                Create User{" "}
+              </Link>
+              <ModeToggle />
+            </div>
+            <div className="flex items-center gap-2">
+              <p> utkarshseth2019@gmail.com</p>
+              <Button> Log out </Button>
+            </div>
           </nav>
           <div className="px-8 py-3 ">{children}</div>
         </body>
