@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
 import { Toaster } from "@/components/ui/toaster";
+import Provider from "./provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,28 +29,39 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <body className={cn(inter.className, " min-h-screen w-full")}>
-          <nav className="flex gap-2 pb-10 relative p-8 justify-between items-center  ">
-            <div className="flex items-center gap-2">
-              <Link className={buttonVariants({ variant: "link" })} href={"/"}>
-                Home page
-              </Link>
-              <Link
-                className={buttonVariants({ variant: "link" })}
-                href={"/create-user"}
-              >
-                Create User{" "}
-              </Link>
-              <ModeToggle />
-            </div>
-            <div className="flex items-center gap-2">
-              <p> utkarshseth2019@gmail.com</p>
-              <Button> Log out </Button>
-            </div>
-          </nav>
-          <div className="px-8 py-3 ">{children}</div>
-        </body>
-        <Toaster />
+        <Provider>
+          <body className={cn(inter.className, " min-h-screen w-full")}>
+            <nav className="flex gap-2 pb-10 relative p-8 justify-between items-center  ">
+              <div className="flex items-center gap-2">
+                <Link
+                  className={buttonVariants({ variant: "link" })}
+                  href={"/"}
+                >
+                  Home page
+                </Link>
+                <Link
+                  className={buttonVariants({ variant: "link" })}
+                  href={"/create-user"}
+                >
+                  Create User{" "}
+                </Link>
+                <Link
+                  className={buttonVariants({ variant: "link" })}
+                  href={"/login-testing"}
+                >
+                  login-testing{" "}
+                </Link>
+                <ModeToggle />
+              </div>
+              <div className="flex items-center gap-2">
+                <p> utkarshseth2019@gmail.com</p>
+                <Button> Log out </Button>
+              </div>
+            </nav>
+            <div className="px-8 py-3 ">{children}</div>
+          </body>
+          <Toaster />
+        </Provider>
       </ThemeProvider>
     </html>
   );
